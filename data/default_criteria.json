@@ -28,7 +28,153 @@
         {"id": "2.09", "name": "Brake System Redundancy", "description": "Redundancy and reliability of service, secondary and park brake systems."},
         {"id": "2.10", "name": "Rollover & Tip-Over Stability", "description": "Static and dynamic stability index; slope rating; stability assist technology."}
       ]
+    },
+    {
+      "section_id": 3,
+      "section_name": "Productivity",
+      "weight": 1.5,
+      "sub_criteria": [
+        {"id": "3.01", "name": "Rated Payload / Output Capacity", "description": "Equipment's rated payload or production capacity versus the tender requirement."},
+        {"id": "3.02", "name": "Cycle Time Performance", "description": "Typical cycle times (loading, travel, dump, return) under site conditions."},
+        {"id": "3.03", "name": "Machine Availability (OEM Fleet Data)", "description": "OEM-reported or independently verified fleet mechanical availability figures."},
+        {"id": "3.04", "name": "Powertrain Performance", "description": "Engine power, torque curve, rimpull and gradeability relevant to site gradients and haul profiles."},
+        {"id": "3.05", "name": "Autonomous / Semi-Autonomous Readiness", "description": "Current or roadmap capability for autonomous or tele-remote operation integration."},
+        {"id": "3.06", "name": "Fleet Management System Integration", "description": "Compatibility with site's existing FMS (e.g. Komatsu KOMTRAX, Cat MineStar, Modular DISPATCH)."},
+        {"id": "3.07", "name": "Tyre Management", "description": "Tyre options available; TKPH ratings for site conditions; tyre pressure monitoring."},
+        {"id": "3.08", "name": "Payload Management System", "description": "On-board payload management accuracy, reporting and integration capability."},
+        {"id": "3.09", "name": "Body Design / Bucket Capacity", "description": "Bowl or bucket design optimisation for material type; liner options; struck vs heaped capacity."},
+        {"id": "3.10", "name": "Operator Productivity Aids", "description": "Technology aids that improve operator efficiency: grade control, load assist, shift data logging."}
+      ]
+    },
+    {
+      "section_id": 4,
+      "section_name": "Cost Efficiency",
+      "weight": 1.2,
+      "sub_criteria": [
+        {"id": "4.01", "name": "Fuel Consumption (L/hr or L/t)", "description": "OEM-stated or independently verified fuel burn under relevant duty cycle."},
+        {"id": "4.02", "name": "Scheduled Maintenance Intervals & Cost", "description": "PM interval (hours), time to complete, parts cost and lube volumes."},
+        {"id": "4.03", "name": "Tyre Life & Cost per Hour", "description": "Expected tyre life under site conditions and all-in tyre cost per operating hour."},
+        {"id": "4.04", "name": "Ground Engaging Tools (GET) Life & Cost", "description": "Expected GET/wear part life and cost per bank cubic metre or per hour."},
+        {"id": "4.05", "name": "Component Rebuild / Exchange Programme", "description": "Availability, pricing and terms of OEM component rebuild or exchange programme for major assemblies."},
+        {"id": "4.06", "name": "Warranty Cost Inclusion", "description": "Scope of items covered under warranty; costs included vs excluded; extended warranty options."},
+        {"id": "4.07", "name": "Energy Recovery / Efficiency Technology", "description": "Trolley-assist compatibility, regenerative braking, hybrid/electric driveline options."},
+        {"id": "4.08", "name": "Unscheduled Maintenance Frequency", "description": "Historical unscheduled maintenance events per 1000 hours from OEM reference fleet data."}
+      ]
+    },
+    {
+      "section_id": 5,
+      "section_name": "Change Management",
+      "weight": 1.0,
+      "sub_criteria": [
+        {"id": "5.01", "name": "Transition Plan Quality", "description": "Clarity, completeness and realism of the bidder's proposed change management and cut-over plan."},
+        {"id": "5.02", "name": "Training Programme Depth", "description": "Hours, format and assessment rigour of operator and maintainer training; simulator availability."},
+        {"id": "5.03", "name": "Commissioning & Acceptance Support", "description": "OEM commissioning team availability, duration of on-site support, acceptance test protocol."},
+        {"id": "5.04", "name": "Tooling & Workshop Requirements", "description": "Special tooling, lifting equipment and workshop infrastructure required; cost and lead time."},
+        {"id": "5.05", "name": "Fleet Commonality with Existing Equipment", "description": "Component, fluid, and system commonality with equipment already operated on site."},
+        {"id": "5.06", "name": "Digital Onboarding & Documentation", "description": "Quality of electronic maintenance manuals, parts books and interactive training materials."}
+      ]
+    },
+    {
+      "section_id": 6,
+      "section_name": "Operator Station",
+      "weight": 0.8,
+      "sub_criteria": [
+        {"id": "6.01", "name": "Ergonomics & Adjustability", "description": "Seat, steering column, pedal and control adjustability; fit for range of operator body sizes."},
+        {"id": "6.02", "name": "Cab Noise & Vibration (NVH)", "description": "Measured or OEM-rated cab noise levels (dB(A)); whole-body vibration index."},
+        {"id": "6.03", "name": "Climate Control", "description": "HVAC capacity and quality for site ambient conditions; air filtration; pressurisation."},
+        {"id": "6.04", "name": "Visibility & Camera Systems", "description": "Direct and camera-assisted visibility; monitor quality and placement; blind-spot elimination."},
+        {"id": "6.05", "name": "Operator Interface / Controls", "description": "Intuitiveness of control layout; joystick vs lever; touchscreen quality; display readability in sunlight."},
+        {"id": "6.06", "name": "Ingress / Egress Safety", "description": "Step and handrail design; angle of ascent; anti-slip surfaces; three-point contact compliance."},
+        {"id": "6.07", "name": "Operator Fatigue Features", "description": "Seat suspension quality; lumbar support; break reminder; environmental comfort features."}
+      ]
+    },
+    {
+      "section_id": 7,
+      "section_name": "Reliability & Maintainability",
+      "weight": 1.3,
+      "sub_criteria": [
+        {"id": "7.01", "name": "Mean Time Between Failures (MTBF)", "description": "OEM or third-party reported MTBF for major systems in comparable operating environments."},
+        {"id": "7.02", "name": "Condition Monitoring Integration", "description": "Oil analysis ports, vibration sensors, on-board diagnostics depth, remote health monitoring."},
+        {"id": "7.03", "name": "Component Accessibility", "description": "Ease of access to filters, fluids, wear parts and major components; time to complete routine tasks."},
+        {"id": "7.04", "name": "Dealer Workshop Capability", "description": "Local dealer workshop tooling, OEM-trained technician numbers and experience level."},
+        {"id": "7.05", "name": "Parts Availability & Lead Times", "description": "Local warehouse stockholding of A-class parts; emergency parts lead time guarantees."},
+        {"id": "7.06", "name": "Scheduled Maintenance System", "description": "Clarity and logic of the PM system; lube charts; oil and fluid specifications; metric consistency."},
+        {"id": "7.07", "name": "Electrical Architecture Robustness", "description": "CAN-bus reliability; harness routing protection; ingress protection ratings; fault diagnosis ease."},
+        {"id": "7.08", "name": "Hydraulic System Design", "description": "Hose routing protection, quick-connect fittings, contamination control, filter access."},
+        {"id": "7.09", "name": "Corrosion & Dust Protection", "description": "Paint specification, sealing, ingress protection of electrical and pneumatic components for site conditions."},
+        {"id": "7.10", "name": "OEM Reliability Track Record", "description": "Published reliability data, reference site performance, industry awards or benchmarking results."}
+      ]
+    },
+    {
+      "section_id": 8,
+      "section_name": "Environmental",
+      "weight": 0.7,
+      "sub_criteria": [
+        {"id": "8.01", "name": "Exhaust Emissions Standard", "description": "Tier / Stage emission certification; NOx, PM and CO2 performance relative to current standards."},
+        {"id": "8.02", "name": "Noise Emissions", "description": "External noise levels at operator position and bystander distances; compliance with site noise limits."},
+        {"id": "8.03", "name": "Fluid Spill Risk Management", "description": "Double-wall hydraulic hoses, spill containment trays, fast-fill contamination controls."},
+        {"id": "8.04", "name": "Electric / Hybrid / Alternative Fuel Pathway", "description": "OEM's stated roadmap for decarbonisation options; current hybrid/electric model availability."},
+        {"id": "8.05", "name": "Tyre & Consumable Waste Management", "description": "OEM programme for recycling or responsible disposal of tyres, batteries and fluids."},
+        {"id": "8.06", "name": "Dust Suppression Systems", "description": "Onboard water suppression, enclosed cab filtration contribution to site dust management plan."}
+      ]
     }
   ],
-  "part3": []
+  "part3": [
+    {
+      "section_id": 9,
+      "section_name": "Supplier Support",
+      "weight": 1.0,
+      "sub_criteria": [
+        {"id": "9.01", "name": "Local Dealer Presence & Responsiveness", "description": "Geographic proximity of dealer branch, field service team size and guaranteed response time."},
+        {"id": "9.02", "name": "Technical Field Support Quality", "description": "OEM field engineer availability, qualifications and experience with the proposed model."},
+        {"id": "9.03", "name": "Customer Reference Sites", "description": "Quality and relevance of reference sites provided; willingness to facilitate site visits."},
+        {"id": "9.04", "name": "Contract Management & Account Management", "description": "Dedicated account manager assignment, escalation pathways and performance review cadence."},
+        {"id": "9.05", "name": "Digital Platform & Reporting", "description": "Customer portal, maintenance scheduling system, fleet data visibility and reporting capability."},
+        {"id": "9.06", "name": "24 / 7 Support Coverage", "description": "After-hours breakdown support capability; on-call technician availability; remote diagnostic support."},
+        {"id": "9.07", "name": "Continuous Improvement Programme", "description": "OEM's process for sharing product improvements, service bulletins and retrofit upgrades."},
+        {"id": "9.08", "name": "Training Facilities", "description": "Quality of OEM training centre; simulator access; certified trainer qualification programme."}
+      ]
+    },
+    {
+      "section_id": 10,
+      "section_name": "Terms & Conditions",
+      "weight": 0.8,
+      "sub_criteria": [
+        {"id": "10.01", "name": "Acceptance of Capstone Standard T&Cs", "description": "Degree to which bidder accepts Capstone's standard purchase T&Cs without material redlines."},
+        {"id": "10.02", "name": "Liability & Indemnity", "description": "Reasonableness of liability caps and indemnity provisions; alignment with Capstone's risk appetite."},
+        {"id": "10.03", "name": "Liquidated Damages / Delay Provisions", "description": "Presence and reasonableness of LD clauses for delivery delays and performance shortfalls."},
+        {"id": "10.04", "name": "Dispute Resolution", "description": "Proposed dispute resolution mechanism; jurisdiction; arbitration vs litigation preference."},
+        {"id": "10.05", "name": "Intellectual Property", "description": "IP provisions for diagnostic software, commissioning tools and equipment data."},
+        {"id": "10.06", "name": "Force Majeure & Change-in-Law", "description": "Scope and reasonableness of force majeure clause; change-in-law risk allocation."}
+      ]
+    },
+    {
+      "section_id": 11,
+      "section_name": "Warranties",
+      "weight": 0.9,
+      "sub_criteria": [
+        {"id": "11.01", "name": "Standard Warranty Period", "description": "Duration (months and/or hours) of standard warranty for machine and major components."},
+        {"id": "11.02", "name": "Warranty Coverage Scope", "description": "Breadth of warranty: parts only vs parts + labour; callout included; consumables exclusions."},
+        {"id": "11.03", "name": "Powertrain Warranty", "description": "Specific warranty terms for engine, transmission, final drives and powertrain components."},
+        {"id": "11.04", "name": "Structural Warranty", "description": "Frame, boom and structural component warranty; fatigue crack coverage."},
+        {"id": "11.05", "name": "Extended Warranty Options", "description": "Availability, cost and terms of extended warranty or Repair & Maintenance agreements."},
+        {"id": "11.06", "name": "Warranty Claims Process", "description": "Speed and ease of warranty claims; OEM approval time; reimbursement of third-party labour."},
+        {"id": "11.07", "name": "Warranty Void Conditions", "description": "Clarity and reasonableness of conditions that would void warranty (fuel, oil, operator abuse)."}
+      ]
+    },
+    {
+      "section_id": 12,
+      "section_name": "Parts Supply",
+      "weight": 0.8,
+      "sub_criteria": [
+        {"id": "12.01", "name": "Recommended Spare Parts List (RSPL)", "description": "Quality and completeness of the RSPL provided with the tender; accuracy of pricing."},
+        {"id": "12.02", "name": "Parts Pricing Mechanism", "description": "Fixed vs CPI-linked pricing; volume discount structure; price guarantee period."},
+        {"id": "12.03", "name": "Local Parts Stockholding", "description": "A-class and B-class parts held in local warehouse; demonstrated fill rate."},
+        {"id": "12.04", "name": "Emergency Parts Delivery", "description": "AOG (aircraft on ground equivalent) parts service; maximum lead time guarantee; air freight provisions."},
+        {"id": "12.05", "name": "Parts Catalogue & Ordering System", "description": "Quality of online parts catalogue; ease of part identification and ordering; PO integration."},
+        {"id": "12.06", "name": "Obsolescence Management", "description": "OEM's policy for providing parts support over the expected 15–20 year machine life."},
+        {"id": "12.07", "name": "Alternative / Non-OEM Parts Policy", "description": "OEM's position on use of approved equivalent parts; impact on warranty."}
+      ]
+    }
+  ]
 }
