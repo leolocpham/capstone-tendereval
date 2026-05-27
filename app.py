@@ -921,6 +921,79 @@ elif page == "📤 Export":
                 mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
             )
 
+    # -----------------------------------------------------------------------
+    # Evaluator Collaboration Sheet
+    # -----------------------------------------------------------------------
+    st.divider()
+    st.markdown("### 👥 Evaluator Collaboration Sheet")
+    st.markdown(
+        "Export a fillable Excel workbook — one sheet per bidder. "
+        "Send it to your evaluators to score. When complete, re-upload it here to import their scores."
+    )
+
+    colA, colB = st.columns(2)
+
+    with colA:
+        st.markdown("**Step 1 — Export**")
+        if st.button("🔨 Generate Evaluator Sheet"):
+            with st.spinner("Building evaluator workbook…"):
+                from utils.eval_sheet import generate_evaluator_sheet
+                eval_xlsx = generate_evaluator_sheet(ev())
+            fname_eval = f"{ev().get('eval_name', 'TenderEval')}_Evaluator_Sheet.xlsx".replace(" ", "_")
+            st.download_button(
+                label="⬇️ Download Evaluator Sheet",
+                data=eval_xlsx,
+                file_name=fname_eval,
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
+            st.caption("Share this file with evaluators. Each bidder has its own sheet.")
+
+    with colB:
+        st.markdown("**Step 2 — Import completed sheet**")
+        uploaded_eval_sheet = st.file_uploader(
+            "Upload completed Evaluator Sheet (.xlsx)",
+            type=["xlsx"],
+            key="eval_sheet_upload",
+        )
+        if uploaded_eval_sheet:
+            from utils.eval_sheet import list_sheet_bidders, parse_evaluator_sheet
+
+            sheet_bytes = uploaded_eval_sheet.read()
+            found_sheets = list_sheet_bidders(sheet_bytes)
+            st.caption(f"Sheets found in file: {', '.join(found_sheets)}")
+
+            import_bidders = [b for b in ev().get("bidders", []) if b in found_sheets or
+                              any(b.lower() in s.lower() or s.lower() in b.lower() for s in found_sheets)]
+
+            if not import_bidders:
+                st.warning("No matching bidder sheets found. Check that sheet names match your bidder names.")
+            else:
+                selected = st.multiselect(
+                    "Select bidders to import scores for",
+                    options=import_bidders,
+                    default=import_bidders,
+                )
+                if st.button("📥 Import Selected Scores") and selected:
+                    imported = []
+                    for bidder in selected:
+                        parsed = parse_evaluator_sheet(sheet_bytes, bidder, ev()["criteria"])
+                        if parsed:
+                            existing = ev()["scores"].get(bidder, {})
+                            # Merge: imported scores overlay existing, preserve AI metadata
+                            for part_key in ("part1_scores", "part2_scores", "part3_scores"):
+                                if parsed.get(part_key):
+                                    existing.setdefault(part_key, {}).update(parsed[part_key])
+                            ev()["scores"][bidder] = existing
+                            imported.append(bidder)
+                    if imported:
+                        fname_saved = save_progress()
+                        ev()["last_saved"] = fname_saved
+                        st.success(
+                            f"✅ Scores imported for: {', '.join(imported)} | Progress saved."
+                        )
+                    else:
+                        st.error("No scores could be parsed. Check the file format.")
+
     st.divider()
     st.markdown("### 💾 Save / Load Evaluation Session (JSON)")
     export_col, import_col = st.columns(2)
