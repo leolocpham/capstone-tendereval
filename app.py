@@ -321,11 +321,14 @@ elif page == "📄 Tender Document":
             from utils.ai_extractor import extract_text, extract_criteria_from_tender
 
             combined_text = ""
+            # Distribute the 60 k-char Claude budget evenly across all files
+            # so every document contributes proportionally, not just the first.
+            per_file_limit = 60_000 // len(uploaded_files)
             with st.spinner("Extracting document text…"):
                 for uf in uploaded_files:
                     part = extract_text(uf.read(), uf.name)
                     if part and not part.startswith("["):
-                        combined_text += f"\n\n--- {uf.name} ---\n\n{part}"
+                        combined_text += f"\n\n--- {uf.name} ---\n\n{part[:per_file_limit]}"
                     else:
                         st.warning(f"⚠️ Could not extract text from {uf.name}: {part}")
 
@@ -467,11 +470,14 @@ elif page == "👥 Bidder Documents":
                     from utils.ai_extractor import extract_text, extract_scores_from_bidder_doc
 
                     combined_text = ""
+                    # Distribute the 70 k-char Claude budget evenly across all files
+                    # so every document contributes proportionally, not just the first.
+                    per_file_limit = 70_000 // len(uploaded_list)
                     with st.spinner(f"Extracting text from {bidder} proposal…"):
                         for uf in uploaded_list:
                             part = extract_text(uf.read(), uf.name)
                             if part and not part.startswith("["):
-                                combined_text += f"\n\n--- {uf.name} ---\n\n{part}"
+                                combined_text += f"\n\n--- {uf.name} ---\n\n{part[:per_file_limit]}"
                             else:
                                 st.warning(f"⚠️ Could not extract text from {uf.name}")
 

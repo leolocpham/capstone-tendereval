@@ -139,8 +139,8 @@ You are customising an evaluation matrix for: **{eval_name}** ({equipment_type})
 ## Default Criteria (JSON)
 {json.dumps(default_criteria, indent=2)}
 
-## Tender Document Text (first 12,000 chars)
-{doc_text[:12000]}
+## Tender Document Text
+{doc_text[:60000]}
 
 ## Instructions
 1. Review the tender document and identify any specific technical requirements, mandatory features, or
@@ -253,8 +253,8 @@ Bidder: **{bidder_name}**
 ## PART 3 — Commercial SWOT (same S/O/N/T/W scale)
 {p3_summary}
 
-## Bidder Proposal Document (first 14,000 chars)
-{doc_text[:14000]}
+## Bidder Proposal Document
+{doc_text[:70000]}
 
 ## Required JSON Output Format
 {{
