@@ -31,3 +31,6 @@ Thumbs.db
 *.xlsx
 *.pptx
 *.pdf
+
+# Local progress saves (user data, not part of source)
+saves/

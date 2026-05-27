@@ -78,6 +78,32 @@ def load_default_criteria() -> dict:
 DEFAULT_CRITERIA = load_default_criteria()
 
 # ---------------------------------------------------------------------------
+# Saves directory + progress save/load helpers
+# ---------------------------------------------------------------------------
+SAVES_DIR = Path(__file__).parent / "saves"
+SAVES_DIR.mkdir(exist_ok=True)
+
+
+def save_progress() -> str:
+    """Persist current session to saves/ and return the filename."""
+    from datetime import datetime
+
+    name = ev().get("eval_name", "session") or "session"
+    safe = "".join(c if c.isalnum() or c in "._- " else "_" for c in name).strip().replace(" ", "_")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"{safe}_{timestamp}.json"
+    with open(SAVES_DIR / filename, "w") as fh:
+        json.dump(ev(), fh, indent=2, default=str)
+    return filename
+
+
+def list_saves() -> list:
+    """Return [(display_name, Path), …] for the 20 most-recent saves."""
+    files = sorted(SAVES_DIR.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+    return [(p.stem, p) for p in files[:20]]
+
+
+# ---------------------------------------------------------------------------
 # Session state initialisation
 # ---------------------------------------------------------------------------
 if "eval" not in st.session_state:
@@ -93,6 +119,7 @@ if "eval" not in st.session_state:
         "api_key": "",
         "tender_doc_summary": "",
         "key_requirements": [],
+        "last_saved": "",
     }
 
 if "page" not in st.session_state:
@@ -144,6 +171,29 @@ with st.sidebar:
         st.markdown(f"**Bidders:** {', '.join(e['bidders'])}")
     api_ok = bool(e.get("api_key"))
     st.markdown(f"**API Key:** {'✅ Set' if api_ok else '❌ Not set'}")
+
+    # ---- Progress save / load ----
+    st.divider()
+    if st.button("💾 Save Progress", key="sidebar_save"):
+        fname = save_progress()
+        ev()["last_saved"] = fname
+        st.success("Saved!")
+    if ev().get("last_saved"):
+        st.caption(f"Last: {ev()['last_saved']}")
+
+    saves = list_saves()
+    if saves:
+        with st.expander("📂 Load Saved Session"):
+            for display_name, save_path in saves:
+                label = display_name[:35] + ("…" if len(display_name) > 35 else "")
+                if st.button(label, key=f"load_{display_name}"):
+                    try:
+                        with open(save_path) as fh:
+                            loaded = json.load(fh)
+                        st.session_state["eval"] = loaded
+                        st.rerun()
+                    except Exception as exc:
+                        st.error(f"Load failed: {exc}")
 
 page = st.session_state["page"]
 
@@ -238,7 +288,9 @@ elif page == "📋 Evaluation Info":
                     ev()["tco"][b] = {}
                 if b not in ev()["tco_results"]:
                     ev()["tco_results"][b] = {}
-            st.success(f"Saved: {eval_name} | {equipment_type} | {len(bidders)} bidder(s)")
+            fname = save_progress()
+            ev()["last_saved"] = fname
+            st.success(f"Saved: {eval_name} | {equipment_type} | {len(bidders)} bidder(s) | Progress saved.")
 
 # ===========================================================================
 # PAGE: 📄 Tender Document
@@ -255,43 +307,50 @@ elif page == "📄 Tender Document":
     if not ev().get("eval_name"):
         st.warning("⚠️ Please fill in Evaluation Info first.")
 
-    uploaded_file = st.file_uploader(
-        "Upload Tender Document (PDF, DOCX, XLSX, TXT)",
+    uploaded_files = st.file_uploader(
+        "Upload Tender Document(s) (PDF, DOCX, XLSX, TXT) — select multiple files if needed",
         type=["pdf", "docx", "xlsx", "xls", "txt"],
+        accept_multiple_files=True,
     )
 
-    if uploaded_file and ev().get("api_key") and ev().get("eval_name"):
-        col1, col2 = st.columns([1, 2])
-        with col1:
-            st.info(f"📎 {uploaded_file.name} ({uploaded_file.size / 1024:.0f} KB)")
+    if uploaded_files and ev().get("api_key") and ev().get("eval_name"):
+        for uf in uploaded_files:
+            st.info(f"📎 {uf.name} ({uf.size / 1024:.0f} KB)")
 
-        with col2:
-            if st.button("🤖 Extract & Customise Criteria with AI"):
-                from utils.ai_extractor import extract_text, extract_criteria_from_tender
+        if st.button("🤖 Extract & Customise Criteria with AI"):
+            from utils.ai_extractor import extract_text, extract_criteria_from_tender
 
-                with st.spinner("Extracting document text…"):
-                    raw_bytes = uploaded_file.read()
-                    doc_text = extract_text(raw_bytes, uploaded_file.name)
+            combined_text = ""
+            with st.spinner("Extracting document text…"):
+                for uf in uploaded_files:
+                    part = extract_text(uf.read(), uf.name)
+                    if part and not part.startswith("["):
+                        combined_text += f"\n\n--- {uf.name} ---\n\n{part}"
+                    else:
+                        st.warning(f"⚠️ Could not extract text from {uf.name}: {part}")
 
-                if not doc_text or doc_text.startswith("["):
-                    st.error(f"Could not extract text: {doc_text}")
-                else:
-                    ev()["tender_doc_summary"] = doc_text[:2000]
-                    with st.spinner("Claude is customising the criteria for this tender…"):
-                        custom_criteria = extract_criteria_from_tender(
-                            api_key=ev()["api_key"],
-                            doc_text=doc_text,
-                            equipment_type=ev().get("equipment_type", ""),
-                            eval_name=ev().get("eval_name", ""),
-                            default_criteria=DEFAULT_CRITERIA,
-                        )
-                    ev()["criteria"] = custom_criteria
-                    st.success(
-                        f"✅ Criteria customised! "
-                        f"Part 1: {len(custom_criteria.get('part1', []))} | "
-                        f"Part 2 sections: {len(custom_criteria.get('part2', []))} | "
-                        f"Part 3 sections: {len(custom_criteria.get('part3', []))}"
+            if not combined_text.strip():
+                st.error("Could not extract text from any uploaded file.")
+            else:
+                ev()["tender_doc_summary"] = combined_text[:2000]
+                with st.spinner("Claude is customising the criteria for this tender…"):
+                    custom_criteria = extract_criteria_from_tender(
+                        api_key=ev()["api_key"],
+                        doc_text=combined_text,
+                        equipment_type=ev().get("equipment_type", ""),
+                        eval_name=ev().get("eval_name", ""),
+                        default_criteria=DEFAULT_CRITERIA,
                     )
+                ev()["criteria"] = custom_criteria
+                fname = save_progress()
+                ev()["last_saved"] = fname
+                st.success(
+                    f"✅ Criteria customised from {len(uploaded_files)} file(s)! "
+                    f"Part 1: {len(custom_criteria.get('part1', []))} | "
+                    f"Part 2 sections: {len(custom_criteria.get('part2', []))} | "
+                    f"Part 3 sections: {len(custom_criteria.get('part3', []))} | "
+                    f"Progress saved."
+                )
 
     # Option to skip / use defaults
     st.divider()
@@ -390,10 +449,11 @@ elif page == "👥 Bidder Documents":
         with st.expander(f"📄 {bidder}", expanded=True):
             col1, col2 = st.columns([2, 1])
             with col1:
-                uploaded = st.file_uploader(
-                    f"Upload {bidder} proposal",
+                uploaded_list = st.file_uploader(
+                    f"Upload {bidder} proposal (select multiple files if needed)",
                     type=["pdf", "docx", "xlsx", "xls", "txt"],
                     key=f"upload_{bidder}",
+                    accept_multiple_files=True,
                 )
             with col2:
                 existing_model = ev()["scores"].get(bidder, {}).get("model_identified", "")
@@ -402,30 +462,39 @@ elif page == "👥 Bidder Documents":
                 else:
                     st.info("Not yet processed")
 
-            if uploaded and ev().get("api_key") and ev().get("criteria"):
+            if uploaded_list and ev().get("api_key") and ev().get("criteria"):
                 if st.button(f"🤖 Extract scores for {bidder}", key=f"extract_{bidder}"):
                     from utils.ai_extractor import extract_text, extract_scores_from_bidder_doc
 
+                    combined_text = ""
                     with st.spinner(f"Extracting text from {bidder} proposal…"):
-                        raw = uploaded.read()
-                        doc_text = extract_text(raw, uploaded.name)
+                        for uf in uploaded_list:
+                            part = extract_text(uf.read(), uf.name)
+                            if part and not part.startswith("["):
+                                combined_text += f"\n\n--- {uf.name} ---\n\n{part}"
+                            else:
+                                st.warning(f"⚠️ Could not extract text from {uf.name}")
 
-                    if not doc_text or doc_text.startswith("["):
-                        st.error(f"Extraction failed: {doc_text}")
+                    if not combined_text.strip():
+                        st.error("Extraction failed: no text could be read from the uploaded file(s).")
                     else:
                         with st.spinner(f"Claude is scoring {bidder}…"):
                             result = extract_scores_from_bidder_doc(
                                 api_key=ev()["api_key"],
-                                doc_text=doc_text,
+                                doc_text=combined_text,
                                 bidder_name=bidder,
                                 equipment_type=ev().get("equipment_type", ""),
                                 eval_name=ev().get("eval_name", ""),
                                 criteria=ev()["criteria"],
                             )
                         ev()["scores"][bidder] = result
+                        fname = save_progress()
+                        ev()["last_saved"] = fname
                         st.success(
-                            f"✅ {bidder} scored! Model: {result.get('model_identified', 'Unknown')} | "
-                            f"TQs: {len(result.get('tq_list', []))}"
+                            f"✅ {bidder} scored from {len(uploaded_list)} file(s)! "
+                            f"Model: {result.get('model_identified', 'Unknown')} | "
+                            f"TQs: {len(result.get('tq_list', []))} | "
+                            f"Progress saved."
                         )
                         if result.get("tq_list"):
                             st.markdown("**Technical Queries (TQs) raised by AI:**")
